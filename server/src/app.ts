@@ -9,6 +9,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { globalLimiter } from './middleware/rateLimit.js';
 import { appointmentsRouter } from './modules/appointments/appointments.routes.js';
 import { authRouter } from './modules/auth/auth.routes.js';
+import { chatRouter } from './modules/chat/chat.routes.js';
 import { servicesRouter } from './modules/services/services.routes.js';
 
 export function createApp() {
@@ -36,7 +37,7 @@ export function createApp() {
     res.json({ status: 'ok' });
   });
 
-  app.use('/api', authRouter, servicesRouter, appointmentsRouter);
+  app.use('/api', authRouter, servicesRouter, appointmentsRouter, chatRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
