@@ -1,0 +1,8 @@
+.booked {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--success);
+  font-size: var(--text-small);
+  font-weight: 500;
+}

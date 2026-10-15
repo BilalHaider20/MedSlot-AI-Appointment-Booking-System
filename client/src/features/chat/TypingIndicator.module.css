@@ -1,0 +1,43 @@
+.bubble {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 5px;
+  padding: 13px var(--space-3);
+  border-radius: var(--radius-bubble);
+  border-bottom-left-radius: var(--radius-tail);
+  background: var(--surface-2);
+  animation: enter var(--duration-enter) ease-out;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.dot:nth-of-type(3) {
+  animation-delay: 0.15s;
+}
+
+.dot:nth-of-type(4) {
+  animation-delay: 0.3s;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
