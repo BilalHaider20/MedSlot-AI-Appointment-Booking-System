@@ -59,6 +59,33 @@ describe('extract with Mistral configured', () => {
     expect(body.messages.at(-1)).toEqual({ role: 'user', content: context.history[1]!.content });
   });
 
+  it('keeps a service the user just named when the model answers from an earlier message', async () => {
+    // What the model really returned for a tapped service chip after "What's free on Friday?".
+    vi.stubGlobal('fetch', mistralReplies(JSON.stringify({ intent: 'availability', date: '2026-10-16', confidence: 0 })));
+    const chipReply: ExtractContext = {
+      ...context,
+      history: [
+        { role: 'user', content: "What's free on Friday?" },
+        { role: 'assistant', content: 'Which service would you like to book?' },
+        { role: 'user', content: 'Sports massage' },
+      ],
+    };
+    const result = await extract(chipReply);
+    expect(result).toMatchObject({ provider: 'mistral', fellBack: false });
+    expect(result.extraction).toMatchObject({ serviceName: 'Sports massage', date: '2026-10-16' });
+  });
+
+  it("doesn't backfill a loose word that only partly matches the catalog", async () => {
+    vi.stubGlobal('fetch', mistralReplies(JSON.stringify({ intent: 'deny', confidence: 0.95 })));
+    const services = [
+      { name: 'Sports massage', durationMinutes: 45 },
+      { name: 'Deep tissue massage', durationMinutes: 60 },
+    ];
+    const history = [{ role: 'user' as const, content: "I don't need this massage" }];
+    const result = await extract({ ...context, services, history });
+    expect(result.extraction).toEqual({ intent: 'deny', confidence: 0.95 });
+  });
+
   it('falls back to the rules extractor on invalid JSON', async () => {
     vi.stubGlobal('fetch', mistralReplies('Sure! You want a massage.'));
     const result = await extract(context);
@@ -81,7 +108,8 @@ describe('extract with Mistral configured', () => {
       'SELECT provider, error FROM ai_interactions WHERE session_id = $1 ORDER BY id',
       [sessionId],
     );
-    expect(rows.map((row) => row.provider)).toEqual(['mistral', 'mistral', 'rules', 'mistral', 'rules', 'mistral', 'rules']);
+    // success, chip reply, loose word, then three fallbacks of two rows each.
+    expect(rows.map((row) => row.provider)).toEqual(['mistral', 'mistral', 'mistral', 'mistral', 'rules', 'mistral', 'rules', 'mistral', 'rules']);
     expect(rows.filter((row) => row.error).length).toBe(3);
     expect(rows.at(-2)?.error).toMatch(/401/);
   });

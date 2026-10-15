@@ -23,7 +23,7 @@ export type Ui =
   | { type: 'slots'; date: string; serviceId: string; slots: string[] }
   | { type: 'services'; services: { id: string; name: string }[] }
   | { type: 'confirm'; draft: Draft }
-  | { type: 'form'; draft: Partial<Draft>; reason: 'unclear' | 'change' }
+  | { type: 'form'; draft: Partial<Draft>; reason: 'unclear' }
   | { type: 'booked'; appointmentId: string };
 
 export type MessageRole = 'user' | 'assistant' | 'system';

@@ -31,6 +31,14 @@ describe('applyExtraction', () => {
   });
 });
 
+describe('applyExtraction for availability questions', () => {
+  it("shows the new day's times instead of moving the pending time there", () => {
+    const pending = { ...emptyState(), step: 'confirm' as const, draft: { serviceId: 's-deep', serviceName: 'Deep tissue massage', date: '2026-10-16', time: '09:30' } };
+    const { state } = applyExtraction(pending, { intent: 'availability', date: '2026-10-19', confidence: 1 }, services);
+    expect(state.draft).toEqual({ serviceId: 's-deep', serviceName: 'Deep tissue massage', date: '2026-10-19' });
+  });
+});
+
 describe('changesDraft', () => {
   const draft = { serviceId: 's-follow', serviceName: 'Follow-up physio', date: '2026-10-19', time: '11:00' };
 

@@ -100,6 +100,9 @@ export function applyExtraction(
     // "Afternoon instead" replaces whatever exact time we had.
     delete draft.time;
     timeOfDay = extraction.timeOfDay;
+  } else if (extraction.intent === 'availability') {
+    // "What's free next week?" is a question. Show that day's times rather than moving the booking there.
+    delete draft.time;
   }
 
   return { state: { ...state, draft, timeOfDay }, ambiguous };

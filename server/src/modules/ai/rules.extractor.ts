@@ -36,7 +36,7 @@ const SERVICE_HINTS: [RegExp, string][] = [
 const INTENT_PATTERNS: [Intent, RegExp][] = [
   ['cancel', /\bcancel/],
   ['list_appointments', /\b(my (appointments?|bookings?)|what (have|did) i (book|booked)|what(?: have|'ve) i got(?: booked)?|what'?s booked|upcoming (appointments?|bookings?))\b/],
-  ['availability', /\b(what'?s (free|available|open)|what is (free|available|open)|availability|available|free (slots?|times?)|any (slots?|times?|openings?)|openings?|what times)\b/],
+  ['availability', /\b(what'?s (free|available|open)|what is (free|available|open)|availability|available|schedule|free (slots?|times?)|any (slots?|times?|openings?)|openings?|what times)\b/],
 ];
 
 const GREETING = /^(hi|hello|hey|hiya|good (morning|afternoon|evening)|thanks|thank you|cheers)( there)?[\s!.,]*$/;
@@ -84,6 +84,8 @@ function findDate(text: string, todayIso: string): string | undefined {
   if (/\bday after tomorrow\b/.test(text)) return today.plus({ days: 2 }).toISODate()!;
   if (/\b(tomorrow|tmrw|tmr)\b/.test(text)) return today.plus({ days: 1 }).toISODate()!;
   if (/\b(today|tonight)\b/.test(text)) return todayIso;
+  if (/\bnext week\b/.test(text)) return today.plus({ weeks: 1 }).startOf('week').toISODate()!;
+  if (/\bthis week\b/.test(text)) return todayIso;
 
   // "12 May", "12th of May", "12 May 2027". "May 12" and "12/05" are left alone on purpose:
   // the first collides with "may I", the second means different things on each side of the Atlantic.

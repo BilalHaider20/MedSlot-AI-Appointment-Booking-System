@@ -55,9 +55,11 @@ export function buildSystemPrompt(context: ExtractContext): string {
     `Booking draft so far: ${draft}`,
     '',
     'Look at the latest user message, using earlier messages only for context.',
+    'The latest message is often a short answer to the assistant\'s last question ("Deep tissue massage", "09:30", "friday"). Take the value from it.',
     `Calendar:\n${calendarLines(context.today)}`,
     'Copy dates from the calendar, never calculate them. A plain weekday ("friday") is the first one on or after today;',
-    '"next friday" is the one marked next week. Dates further out: count from the calendar. Use null for anything not stated.',
+    '"next friday" is the one marked next week. "next week" means its Monday; "this week" means today.',
+    'Dates further out: count from the calendar. Use null for anything not stated.',
     'serviceName must be one of the services above, or null if unclear.',
     'Use "confirm" for yes / sounds good / book it, and "deny" for no / change something.',
     'If the user changes the service, day or time, use "book" and return the new values.',
@@ -108,8 +110,28 @@ async function extractWithMistral(context: ExtractContext, apiKey: string): Prom
   }
 }
 
+const latestUserText = (context: ExtractContext) =>
+  capped(context.history.findLast((turn) => turn.role === 'user')?.content ?? '');
+
+/**
+ * The model sometimes answers from an earlier message and drops what the user just
+ * said: a tapped service chip, or "next week". When the latest message plainly names
+ * a service or a day and the model left it out, the rules extractor's reading fills
+ * the gap. Only a full catalog name counts as a service: the loose "massage" in
+ * "I don't need this massage" doesn't.
+ */
+function withStatedFields(extraction: Extraction, context: ExtractContext): Extraction {
+  const stated = extractWithRules(latestUserText(context), context);
+  const filled = { ...extraction };
+  if (!filled.serviceName && context.services.some((service) => service.name === stated.serviceName)) {
+    filled.serviceName = stated.serviceName;
+  }
+  if (!filled.date && stated.date) filled.date = stated.date;
+  return filled;
+}
+
 async function extractByRules(context: ExtractContext): Promise<Extraction> {
-  const latest = capped(context.history.findLast((turn) => turn.role === 'user')?.content ?? '');
+  const latest = latestUserText(context);
   const started = performance.now();
   const extraction = extractWithRules(latest, { services: context.services, today: context.today });
   await logInteraction({
@@ -129,7 +151,8 @@ const logBase = (context: ExtractContext) => ({ businessId: context.businessId, 
 export async function extract(context: ExtractContext): Promise<ExtractResult> {
   if (config.MISTRAL_API_KEY) {
     try {
-      return { extraction: await extractWithMistral(context, config.MISTRAL_API_KEY), provider: 'mistral', fellBack: false };
+      const extraction = withStatedFields(await extractWithMistral(context, config.MISTRAL_API_KEY), context);
+      return { extraction, provider: 'mistral', fellBack: false };
     } catch {
       // Already recorded in ai_interactions; the rules extractor takes over.
       return { extraction: await extractByRules(context), provider: 'rules', fellBack: true };

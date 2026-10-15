@@ -130,4 +130,25 @@ describe('API', () => {
     ]);
     expect(results.map((r) => r.status).sort()).toEqual([201, 409]);
   });
+
+  it('drops the pending booking on a plain no, so a later yes books nothing', async () => {
+    const agent = request.agent(app);
+    await agent.post('/api/auth/login').send({ email: 'maya.okafor@medslot.test', password: 'demo1234' });
+    const sessionId = (await agent.post('/api/chat/sessions')).body.session.id;
+    const say = (content: string) => agent.post(`/api/chat/sessions/${sessionId}/messages`).send({ content });
+
+    const { phrase } = nextOpenDay();
+    expect((await say(`follow up physio ${phrase} at 11am`)).body.session.state.step).toBe('confirm');
+
+    const no = await say("no, I don't need it");
+    expect(no.body.messages[1].content).toMatch(/^Okay, I haven't booked it/);
+    expect(no.body.messages[1].meta.ui.type).toBe('services');
+    expect(no.body.session.state).toMatchObject({ step: 'idle', draft: {} });
+
+    expect((await agent.post(`/api/chat/sessions/${sessionId}/confirm`)).status).toBe(409);
+
+    // Same before the confirm step: halfway through picking a time.
+    expect((await say(`sports massage ${phrase}`)).body.session.state.step).toBe('time');
+    expect((await say('no thanks')).body.session.state).toMatchObject({ step: 'idle', draft: {} });
+  });
 });

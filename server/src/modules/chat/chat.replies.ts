@@ -113,12 +113,18 @@ export function justTaken(time: string, service: Service, date: string, slots: s
   };
 }
 
-export function offerForm(state: ChatState, reason: 'unclear' | 'change'): ReplyText {
-  const content =
-    reason === 'change'
-      ? 'No problem. Tell me what to change, or edit it here.'
-      : "I'm not quite following. You can fill in the details here instead.";
-  return { content, ui: { type: 'form', draft: state.draft, reason } };
+export function offerForm(state: ChatState, reason: 'unclear'): ReplyText {
+  return {
+    content: "I'm not quite following. You can fill in the details here instead.",
+    ui: { type: 'form', draft: state.draft, reason },
+  };
+}
+
+export function dropped(services: Service[]): ReplyText {
+  return {
+    content: "Okay, I haven't booked it. If you'd like a different service or time, tell me or pick one here.",
+    ui: serviceChips(services),
+  };
 }
 
 export function upcoming(appointments: Appointment[], timezone: string): ReplyText {

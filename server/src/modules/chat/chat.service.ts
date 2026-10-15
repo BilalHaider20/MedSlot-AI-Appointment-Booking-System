@@ -138,11 +138,10 @@ async function bookDraft(ctx: TurnContext): Promise<Reply> {
 async function respond(ctx: TurnContext, result: ExtractResult): Promise<Reply> {
   const { state } = ctx.session;
   const awaitingConfirmation = state.step === 'confirm';
+  const changing = changesDraft(state.draft, result.extraction, ctx.services);
 
   // "Yes, but at 4" or "Tuesday instead": never book the old draft, and don't drop the new details.
-  if (awaitingConfirmation && changesDraft(state.draft, result.extraction, ctx.services)) {
-    return continueBooking(ctx, result);
-  }
+  if (awaitingConfirmation && changing) return continueBooking(ctx, result);
 
   switch (result.extraction.intent) {
     case 'list_appointments': {
@@ -155,8 +154,9 @@ async function respond(ctx: TurnContext, result: ExtractResult): Promise<Reply> 
       if (awaitingConfirmation) return bookDraft(ctx);
       break;
     case 'deny':
-      // Leaving 'confirm' means a stray "yes" later can't book something by accident.
-      if (awaitingConfirmation) return { ...replies.offerForm(state, 'change'), state: { ...state, step: 'idle' } };
+      // A plain "no, I don't need it" at any step lets the draft go, so a stray "yes" later books nothing.
+      // "No, make it 4pm" carries a change and carries on below.
+      if (!changing && !isEmptyDraft(state.draft)) return { ...replies.dropped(ctx.services), state: emptyState() };
       break;
     case 'smalltalk':
       if (isEmptyDraft(state.draft)) return { ...replies.smalltalk(ctx.services), state: { ...state, misses: 0 } };

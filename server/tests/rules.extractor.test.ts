@@ -24,6 +24,8 @@ const cases: [string, Partial<Extraction>][] = [
   ['next thursday at 3', { date: '2026-10-22', time: '15:00' }],
   ['sports massage next friday at 9am', { date: '2026-10-23', time: '09:00' }],
   ['12/05 at half past 3', { date: undefined, time: '15:30' }],
+  ['what is the schedule for next week', { intent: 'availability', date: '2026-10-19' }],
+  ['anything this week?', { date: '2026-10-15' }],
   ['Yes please', { intent: 'confirm' }],
   ['sounds good, book it', { intent: 'confirm' }],
   ['no, I want to change something', { intent: 'deny' }],
