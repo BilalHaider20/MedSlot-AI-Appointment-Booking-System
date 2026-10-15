@@ -50,6 +50,16 @@ export function understood(extraction: Extraction): boolean {
   return hasField || extraction.intent !== 'unknown';
 }
 
+/** True when the message asks for a different service, day or time than the draft holds. */
+export function changesDraft(draft: Partial<Draft>, extraction: Extraction, services: Service[]): boolean {
+  if (extraction.date && extraction.date !== draft.date) return true;
+  if (extraction.time && extraction.time !== draft.time) return true;
+  if (extraction.timeOfDay && !extraction.time) return true;
+  if (!extraction.serviceName) return false;
+  const matches = matchServices(services, extraction.serviceName);
+  return matches.length !== 1 || matches[0]!.id !== draft.serviceId;
+}
+
 export function completeDraft(draft: Partial<Draft>): Draft | null {
   const { serviceId, serviceName, date, time, notes } = draft;
   if (!serviceId || !serviceName || !date || !time) return null;

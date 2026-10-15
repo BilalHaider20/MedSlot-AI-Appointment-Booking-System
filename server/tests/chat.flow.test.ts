@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { OpeningHours } from '../src/modules/appointments/availability.js';
-import { applyExtraction, nextStep, stateAfter, type StepInput } from '../src/modules/chat/chat.flow.js';
+import { applyExtraction, changesDraft, nextStep, stateAfter, type StepInput } from '../src/modules/chat/chat.flow.js';
 import { emptyState } from '../src/modules/chat/chat.types.js';
 
 const services = [
@@ -28,6 +28,22 @@ describe('applyExtraction', () => {
     const result = applyExtraction(emptyState(), { intent: 'book', serviceName: 'massage', confidence: 1 }, services);
     expect(result.state.draft.serviceId).toBeUndefined();
     expect(result.ambiguous.map((s) => s.id)).toEqual(['s-sports', 's-deep']);
+  });
+});
+
+describe('changesDraft', () => {
+  const draft = { serviceId: 's-follow', serviceName: 'Follow-up physio', date: '2026-10-19', time: '11:00' };
+
+  it('spots a new day, time or service', () => {
+    expect(changesDraft(draft, { intent: 'deny', date: '2026-10-20', confidence: 1 }, services)).toBe(true);
+    expect(changesDraft(draft, { intent: 'confirm', time: '16:00', confidence: 1 }, services)).toBe(true);
+    expect(changesDraft(draft, { intent: 'book', serviceName: 'sports massage', confidence: 1 }, services)).toBe(true);
+  });
+
+  it('treats a plain yes, even one repeating the draft, as no change', () => {
+    expect(changesDraft(draft, { intent: 'confirm', confidence: 1 }, services)).toBe(false);
+    const repeated = { intent: 'confirm' as const, serviceName: 'Follow-up physio', date: '2026-10-19', time: '11:00', confidence: 1 };
+    expect(changesDraft(draft, repeated, services)).toBe(false);
   });
 });
 

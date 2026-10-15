@@ -12,7 +12,7 @@ const envSchema = z.object({
   CLIENT_ORIGIN: z.string().url().default('http://localhost:5173'),
   DEFAULT_BUSINESS_SLUG: z.string().min(1).default('harbor-street'),
   MISTRAL_API_KEY: z.string().optional().transform((value) => value || undefined),
-  MISTRAL_MODEL: z.string().min(1).default('mistral-small-latest'),
+  MISTRAL_MODEL: z.string().min(1).default('open-mistral-nemo'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).optional(),
 });
 

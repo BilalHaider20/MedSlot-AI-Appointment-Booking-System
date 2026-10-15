@@ -14,6 +14,7 @@ import type { AuthUser } from '../auth/auth.tokens.js';
 import { getBusiness, listServices, type Business, type Service } from '../services/services.service.js';
 import {
   applyExtraction,
+  changesDraft,
   completeDraft,
   isEmptyDraft,
   nextStep,
@@ -137,6 +138,11 @@ async function bookDraft(ctx: TurnContext): Promise<Reply> {
 async function respond(ctx: TurnContext, result: ExtractResult): Promise<Reply> {
   const { state } = ctx.session;
   const awaitingConfirmation = state.step === 'confirm';
+
+  // "Yes, but at 4" or "Tuesday instead": never book the old draft, and don't drop the new details.
+  if (awaitingConfirmation && changesDraft(state.draft, result.extraction, ctx.services)) {
+    return continueBooking(ctx, result);
+  }
 
   switch (result.extraction.intent) {
     case 'list_appointments': {

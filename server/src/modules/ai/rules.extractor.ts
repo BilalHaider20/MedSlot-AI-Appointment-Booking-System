@@ -35,7 +35,7 @@ const SERVICE_HINTS: [RegExp, string][] = [
 // Order matters: "cancel my appointment" is a cancel, not a listing.
 const INTENT_PATTERNS: [Intent, RegExp][] = [
   ['cancel', /\bcancel/],
-  ['list_appointments', /\b(my (appointments?|bookings?)|what (have|did) i (book|booked)|what'?s booked|upcoming (appointments?|bookings?))\b/],
+  ['list_appointments', /\b(my (appointments?|bookings?)|what (have|did) i (book|booked)|what(?: have|'ve) i got(?: booked)?|what'?s booked|upcoming (appointments?|bookings?))\b/],
   ['availability', /\b(what'?s (free|available|open)|what is (free|available|open)|availability|available|free (slots?|times?)|any (slots?|times?|openings?)|openings?|what times)\b/],
 ];
 
@@ -125,7 +125,12 @@ function findTime(text: string): string | undefined {
   }
 
   const twentyFourHour = /\b([01]?\d|2[0-3]):([0-5]\d)\b/.exec(text);
-  if (twentyFourHour) return formatTime(Number(twentyFourHour[1]), Number(twentyFourHour[2]));
+  if (twentyFourHour) {
+    const [, hour, minutes] = twentyFourHour;
+    // "3:30" with no am/pm is the afternoon; a written "03:30" is taken literally.
+    const hours = hour!.length === 1 ? assumeDaytime(Number(hour)) : Number(hour);
+    return formatTime(hours, Number(minutes));
+  }
 
   const halfPast = /\bhalf past (\d{1,2})\b/.exec(text);
   if (halfPast) return formatTime(assumeDaytime(Number(halfPast[1])), 30);
@@ -133,7 +138,7 @@ function findTime(text: string): string | undefined {
   const quarterPast = /\bquarter past (\d{1,2})\b/.exec(text);
   if (quarterPast) return formatTime(assumeDaytime(Number(quarterPast[1])), 15);
 
-  const atHour = /\bat (\d{1,2})\b(?![:.]\d)/.exec(text);
+  const atHour = /\b(?:at|around|about) (\d{1,2})\b(?![:.]\d)/.exec(text);
   if (atHour && Number(atHour[1]) <= 12) return formatTime(assumeDaytime(Number(atHour[1])), 0);
 
   return undefined;

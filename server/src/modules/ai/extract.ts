@@ -19,6 +19,21 @@ const RESPONSE_SHAPE = `{
 }`;
 
 /**
+ * Models are unreliable at weekday arithmetic, so we hand them a calendar to copy
+ * from: today through the end of next week, labelled by week.
+ */
+export function calendarLines(todayIso: string): string {
+  const today = DateTime.fromISO(todayIso);
+  const lastDay = today.endOf('week').plus({ weeks: 1 });
+  const lines: string[] = [];
+  for (let day = today; day <= lastDay; day = day.plus({ days: 1 })) {
+    const week = day.hasSame(today, 'week') ? 'this week' : 'next week';
+    lines.push(`- ${day.toFormat('cccc')} ${day.toISODate()} (${week})`);
+  }
+  return lines.join('\n');
+}
+
+/**
  * Only facts we control go in here: catalog, date, and draft fields that were
  * already validated. User text is never interpolated (draft notes stay out too).
  */
@@ -40,9 +55,14 @@ export function buildSystemPrompt(context: ExtractContext): string {
     `Booking draft so far: ${draft}`,
     '',
     'Look at the latest user message, using earlier messages only for context.',
-    'Resolve relative dates ("tomorrow", "friday") against today. Use null for anything not stated.',
+    `Calendar:\n${calendarLines(context.today)}`,
+    'Copy dates from the calendar, never calculate them. A plain weekday ("friday") is the first one on or after today;',
+    '"next friday" is the one marked next week. Dates further out: count from the calendar. Use null for anything not stated.',
     'serviceName must be one of the services above, or null if unclear.',
     'Use "confirm" for yes / sounds good / book it, and "deny" for no / change something.',
+    'If the user changes the service, day or time, use "book" and return the new values.',
+    'notes is only for things the clinic should know about the visit (symptoms, injuries, requests).',
+    'Never put dates, times or scheduling changes in notes. Use null if there is nothing.',
     `Return only a JSON object with exactly this shape:\n${RESPONSE_SHAPE}`,
   ].join('\n');
 }

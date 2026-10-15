@@ -155,7 +155,7 @@ Replies are short templates written in plain language. The model does not write 
 ## AI service (server/src/modules/ai)
 
 - `mistral.client.ts` fetch to `https://api.mistral.ai/v1/chat/completions`,
-  model from env (`mistral-small-latest`), `temperature: 0`,
+  model from env (`open-mistral-nemo` by default), `temperature: 0`,
   `response_format: { type: 'json_object' }`, 8s timeout via AbortController.
 - `rules.extractor.ts` regex/keyword extractor (service names, today/tomorrow/weekday
   names/`12 May`/`2026-05-12`, `3pm`/`15:00`/`half past 3`, yes/no words).
