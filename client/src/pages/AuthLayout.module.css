@@ -10,11 +10,8 @@
   max-width: 400px;
 }
 
-.product {
+.brand {
   margin-bottom: var(--space-4);
-  font-size: var(--text-section);
-  font-weight: 600;
-  letter-spacing: -0.01em;
 }
 
 .card {

@@ -1,6 +1,6 @@
 # Architecture
 
-Bookwell is a small multi-tenant booking product. A signed-in customer of a business
+Medslot is a small multi-tenant booking product. A signed-in customer of a business
 (our demo tenant is **Harbor Street Physio**) can book an appointment by chatting
 with an assistant, or by filling in a plain form. Both paths end in the same
 appointments service.
@@ -44,7 +44,7 @@ Routes never touch SQL; services never touch `req`.
 | Decision | Why |
 | --- | --- |
 | Raw SQL with `pg`, no ORM | The schema is a deliverable. Writing the SQL keeps constraints and indexes visible. |
-| JWT in an httpOnly cookie (`bw_token`), also accepts `Authorization: Bearer` | Token is not readable by JS (XSS). SameSite=Lax + JSON-only bodies covers CSRF for this scope. Bearer kept for curl/tests. |
+| JWT in an httpOnly cookie (`ms_token`), also accepts `Authorization: Bearer` | Token is not readable by JS (XSS). SameSite=Lax + JSON-only bodies covers CSRF for this scope. Bearer kept for curl/tests. |
 | Request/response chat + polling (`GET ...messages?after=`) every 4s | One user talking to one bot. A request/response round trip is the real-time path; polling keeps other tabs in sync. WebSockets would add infra with no user-visible gain here. |
 | AI only extracts fields. Code decides what happens next. | The model never books, never invents slots, never writes the reply about availability. Business rules stay testable and deterministic. |
 | Rules-based extractor as fallback | Works without an API key, on timeouts, and when the model returns invalid JSON. Same output shape. |

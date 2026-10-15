@@ -5,7 +5,7 @@ import { logger } from './lib/logger.js';
 
 const server = createApp().listen(config.PORT, () => {
   const ai = config.MISTRAL_API_KEY ? `mistral (${config.MISTRAL_MODEL})` : 'rules only';
-  logger.info(`Bookwell API on http://localhost:${config.PORT} (extractor: ${ai})`);
+  logger.info(`Medslot API on http://localhost:${config.PORT} (extractor: ${ai})`);
 });
 
 function shutdown(signal: string) {

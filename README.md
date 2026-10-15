@@ -1,4 +1,4 @@
-# Bookwell
+# Medslot
 
 A small booking app for a physio clinic. You sign in, tell the assistant what you
 need ("deep tissue massage next Tuesday afternoon"), pick a time, confirm, and it's
@@ -32,10 +32,10 @@ npm run db:setup
 npm run dev
 ```
 
-Open http://localhost:5173 and log in with **demo@bookwell.test / demo1234**, or create an account.
+Open http://localhost:5173 and log in with **demo@medslot.test / demo1234**, or create an account.
 The API runs on :4000; Vite proxies `/api` to it, so the auth cookie is first-party.
 
-Tests (unit tests plus API integration tests against a throwaway `bookwell_test` database):
+Tests (unit tests plus API integration tests against a throwaway `medslot_test` database):
 
 ```bash
 npm test

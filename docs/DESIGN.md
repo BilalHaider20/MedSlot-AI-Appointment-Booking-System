@@ -1,10 +1,18 @@
-# Design System — Bookwell
+# Design System — Medslot
 
 ## Product Context
 - **What this is:** a booking app for small service businesses. Customers book by chatting with an assistant or by filling a short form.
 - **Who it's for:** clients of a physio / massage clinic. Not technical, often on a phone, usually booking between other things.
 - **Project type:** web app (signed-in, two-panel workspace)
 - **The one thing to remember:** booking took less than a minute and nothing felt confusing.
+
+## Brand
+- **Name:** Medslot. Always one word, capital M only.
+- **Mark:** a heart drawn as a check, in two strokes. The left lobe runs down to the check's low point, and the long stroke rises into the right lobe: care, and a booking that's done.
+- **Colors:** left stroke `--logo-light` (`#5CB89C` light / `#8FD1BA` dark), right stroke `--logo-dark` (`#1F6F5C` light / `#4A9E85` dark). The dark-mode pair is spread wider so the two strokes stay distinct on `#181B1A`.
+- **Construction:** round caps and joins, stroke 7.5 on a 56-unit grid. Don't outline, rotate, add a container or use a gradient.
+- **Lockup:** mark + "Medslot" in Instrument Sans 600, gap `--space-2`. Mark height is about 0.8 of the cap-to-baseline line.
+- **Files:** `docs/brand/` (SVG mark for light and dark, 512px app icon, logo PNG). The favicon switches colors with the system theme.
 
 ## Aesthetic Direction
 - **Direction:** Industrial/Utilitarian, softened. A calm tool, not a marketing page.

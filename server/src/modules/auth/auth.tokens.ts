@@ -8,7 +8,7 @@ export type Role = (typeof roles)[number];
 
 export type AuthUser = { id: string; businessId: string; role: Role };
 
-export const TOKEN_COOKIE = 'bw_token';
+export const TOKEN_COOKIE = 'ms_token';
 export const tokenTtlMs = durationToMs(config.JWT_EXPIRES_IN);
 
 const claimsSchema = z.object({

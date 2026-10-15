@@ -26,10 +26,10 @@ INSERT INTO services (id, business_id, name, duration_minutes, price_cents) VALU
 
 -- bcrypt (cost 10) of "demo1234", generated with bcryptjs.
 INSERT INTO users (id, business_id, email, password_hash, full_name, phone, created_at) VALUES
-  ('2774234f-6751-43f5-bdbd-e2f72c7611a0', 'bdb9cba5-d7ab-4cda-887a-c780161a7434', 'demo@bookwell.test',
+  ('2774234f-6751-43f5-bdbd-e2f72c7611a0', 'bdb9cba5-d7ab-4cda-887a-c780161a7434', 'demo@medslot.test',
    '$2b$10$gZZ5P0.1v.vBsekWESJPV.rciiPUhAM1E5O1WydRCflDNmDbdb182', 'Jordan Ellis', '+1 617 555 0142',
    now() - interval '30 days'),
-  ('06b7c903-5bf3-47ee-ac35-a352b726ccb2', 'bdb9cba5-d7ab-4cda-887a-c780161a7434', 'maya.okafor@bookwell.test',
+  ('06b7c903-5bf3-47ee-ac35-a352b726ccb2', 'bdb9cba5-d7ab-4cda-887a-c780161a7434', 'maya.okafor@medslot.test',
    '$2b$10$UcJubOxpBX1WCV0.wQUAh.aetiUiB89aeQtRqpOP/Sv0lGCy4ER9.', 'Maya Okafor', '+1 617 555 0187',
    now() - interval '21 days');
 

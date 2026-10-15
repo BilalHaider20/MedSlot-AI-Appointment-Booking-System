@@ -1,6 +1,7 @@
 import { LogOut, Monitor, Moon, Sun } from 'lucide-react'
 import { useAuth, useCurrentUser } from '../auth/AuthProvider'
 import { useTheme, type ThemePreference } from '../theme/ThemeProvider'
+import { Logo } from './Logo'
 import { Menu, MenuItem, MenuSection } from './Menu'
 import styles from './AppHeader.module.css'
 
@@ -28,7 +29,7 @@ export function AppHeader() {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <span className={styles.product}>Bookwell</span>
+        <Logo />
         <div className={styles.actions}>
           <span className={styles.business}>{user.business.name}</span>
           <Menu

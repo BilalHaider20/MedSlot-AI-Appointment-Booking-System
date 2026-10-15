@@ -1,5 +1,5 @@
 // Drops and recreates the database named in DATABASE_URL, then loads schema.sql and seed.sql.
-// Also imported by the test global setup to build bookwell_test.
+// Also imported by the test global setup to build medslot_test.
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import dotenv from 'dotenv';

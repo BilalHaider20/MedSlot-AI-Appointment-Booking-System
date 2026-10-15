@@ -1,0 +1,21 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-section);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.mark {
+  flex-shrink: 0;
+}
+
+.left {
+  stroke: var(--logo-light);
+}
+
+.right {
+  stroke: var(--logo-dark);
+}

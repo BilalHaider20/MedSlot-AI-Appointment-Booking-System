@@ -1,4 +1,4 @@
--- Bookwell schema. Safe to re-run: drops everything it owns first.
+-- Medslot schema. Safe to re-run: drops everything it owns first.
 -- Run via `npm run db:setup`, which also loads seed.sql.
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;   -- gen_random_uuid()

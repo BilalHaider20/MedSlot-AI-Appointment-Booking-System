@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 
 export type ThemePreference = 'system' | 'light' | 'dark'
 
-const STORAGE_KEY = 'bookwell.theme'
+const STORAGE_KEY = 'medslot.theme'
 
 interface ThemeContextValue {
   theme: ThemePreference

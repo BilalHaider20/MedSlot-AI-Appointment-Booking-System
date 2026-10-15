@@ -1,4 +1,4 @@
-// End to end against a real database (bookwell_test, rebuilt by globalSetup).
+// End to end against a real database (medslot_test, rebuilt by globalSetup).
 import { DateTime } from 'luxon';
 import request from 'supertest';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -36,24 +36,24 @@ describe('API', () => {
   });
 
   it('signs up, books, blocks a double booking, then books through chat', async () => {
-    const email = `alex.rivera.${Date.now()}@bookwell.test`;
+    const email = `alex.rivera.${Date.now()}@medslot.test`;
     const password = 'correct horse battery';
 
     const signup = await request(app).post('/api/auth/signup').send({ fullName: 'Alex Rivera', email, password });
     expect(signup.status).toBe(201);
     expect(signup.body.user).toMatchObject({ email, fullName: 'Alex Rivera', role: 'customer' });
     expect(JSON.stringify(signup.body)).not.toMatch(/password/i);
-    expect(signup.headers['set-cookie']?.[0]).toMatch(/^bw_token=.+HttpOnly/);
+    expect(signup.headers['set-cookie']?.[0]).toMatch(/^ms_token=.+HttpOnly/);
 
     const duplicate = await request(app).post('/api/auth/signup').send({ fullName: 'Alex Rivera', email, password });
     expect(duplicate.status).toBe(409);
 
     const wrongPassword = await request(app).post('/api/auth/login').send({ email, password: 'not the password' });
-    const unknownEmail = await request(app).post('/api/auth/login').send({ email: 'nobody@bookwell.test', password });
+    const unknownEmail = await request(app).post('/api/auth/login').send({ email: 'nobody@medslot.test', password });
     expect(wrongPassword.status).toBe(401);
     expect(wrongPassword.body).toEqual(unknownEmail.body);
 
-    // The agent keeps the bw_token cookie from here on.
+    // The agent keeps the ms_token cookie from here on.
     const agent = request.agent(app);
     const login = await agent.post('/api/auth/login').send({ email: email.toUpperCase(), password });
     expect(login.status).toBe(200);
@@ -118,7 +118,7 @@ describe('API', () => {
 
   it('lets exactly one of two simultaneous requests take a slot', async () => {
     const agent = request.agent(app);
-    await agent.post('/api/auth/login').send({ email: 'maya.okafor@bookwell.test', password: 'demo1234' });
+    await agent.post('/api/auth/login').send({ email: 'maya.okafor@medslot.test', password: 'demo1234' });
     const services: ServiceBody[] = (await agent.get('/api/services')).body.services;
     const assessment = services.find((s) => s.name === 'Initial assessment')!;
 

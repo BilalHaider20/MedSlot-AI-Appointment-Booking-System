@@ -103,7 +103,7 @@ export function LoginPage() {
           Log in
         </Button>
       </form>
-      <p className={styles.hint}>Demo account: demo@bookwell.test / demo1234</p>
+      <p className={styles.hint}>Demo account: demo@medslot.test / demo1234</p>
     </AuthLayout>
   )
 }
