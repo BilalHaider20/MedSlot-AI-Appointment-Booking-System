@@ -7,7 +7,8 @@ export interface SessionWithMessages {
 }
 
 export interface ConfirmResult extends SessionWithMessages {
-  appointment: Appointment
+  /** null when the slot went between the confirm card and the click; the reply offers new times. */
+  appointment: Appointment | null
 }
 
 export const chatApi = {

@@ -4,7 +4,11 @@
   "scripts": {
     "install:all": "npm --prefix server install && npm --prefix client install",
     "db:setup": "npm --prefix server run db:setup",
-    "dev": "concurrently -n server,client -c green,blue \"npm --prefix server run dev\" \"npm --prefix client run dev\""
+    "dev": "concurrently -n server,client -c green,blue \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "PORT=4000 npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "test": "npm --prefix server test",
+    "build": "npm --prefix client run build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

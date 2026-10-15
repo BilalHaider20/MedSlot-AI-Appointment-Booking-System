@@ -65,7 +65,7 @@ export function useChat(conversation: SessionWithMessages) {
     try {
       const result = await chatApi.confirm(sessionId)
       dispatch({ type: 'received', messages: result.messages })
-      afterBooking()
+      if (result.appointment) afterBooking()
     } catch (error) {
       const slotTaken = isApiError(error) && error.status === 409
       toast(slotTaken ? 'That time was just taken. Pick another.' : errorMessage(error), 'danger')

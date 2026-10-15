@@ -1,5 +1,4 @@
 const LOCALE = 'en-GB'
-const CURRENCY = 'GBP'
 
 const formatterCache = new Map<string, Intl.DateTimeFormat>()
 
@@ -58,7 +57,8 @@ export function formatDuration(minutes: number): string {
   return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`
 }
 
-const priceFormatter = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: CURRENCY })
+// Prices are in USD (the demo clinic is in New York); dates keep the compact "Fri 16 Oct" style the assistant uses.
+const priceFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 export function formatPrice(cents: number): string {
   return priceFormatter.format(cents / 100).replace(/\.00$/, '')
