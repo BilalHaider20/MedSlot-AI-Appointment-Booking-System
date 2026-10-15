@@ -45,6 +45,18 @@ Tests (unit tests plus API integration tests against a throwaway `medslot_test` 
 npm test
 ```
 
+## Deploying (Render)
+
+`render.yaml` describes the whole setup: one free web service that runs the API and
+serves the built React app (same origin, so the auth cookie stays first-party), plus a
+free Postgres database. In Render: **New → Blueprint**, pick this repo, paste a
+`MISTRAL_API_KEY` when asked. On first start against the empty database the server
+creates the tables and demo data itself; later restarts leave data alone.
+
+Free-tier notes: the service sleeps after ~15 idle minutes (first request then takes
+up to a minute), and the free database expires after about 30 days. Password reset
+emails are only logged in production, since no email provider is configured.
+
 ## Checking the database
 
 Everything lives in the local `medslot` database. Open a SQL prompt:

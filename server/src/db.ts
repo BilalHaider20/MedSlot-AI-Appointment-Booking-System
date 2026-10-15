@@ -5,6 +5,8 @@ export const pool = new pg.Pool({
   connectionString: config.DATABASE_URL,
   max: 10,
   idleTimeoutMillis: 30_000,
+  // Hosted providers use certificates Node doesn't ship with; the connection is still encrypted.
+  ssl: config.DATABASE_SSL ? { rejectUnauthorized: false } : undefined,
 });
 
 // Repositories accept either the pool or a transaction client.

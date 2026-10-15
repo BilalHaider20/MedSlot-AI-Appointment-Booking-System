@@ -8,9 +8,14 @@
     "dev:server": "PORT=4000 npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
     "test": "npm --prefix server test",
-    "build": "npm --prefix client run build"
+    "build": "npm --prefix client run build",
+    "render-build": "npm ci --prefix server --include=dev && npm ci --prefix client --include=dev && npm run build --prefix client",
+    "start": "npm --prefix server start"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }

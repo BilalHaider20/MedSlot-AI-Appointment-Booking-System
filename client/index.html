@@ -12,12 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap"
     />
     <title>Medslot</title>
-    <script>
-      try {
-        var theme = localStorage.getItem('medslot.theme')
-        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
-      } catch (e) {}
-    </script>
+    <!-- Applies a saved theme before first paint. A file, not inline, so the CSP can stay script-src 'self'. -->
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>

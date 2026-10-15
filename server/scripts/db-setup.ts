@@ -1,11 +1,9 @@
 // Drops and recreates the database named in DATABASE_URL, then loads schema.sql and seed.sql.
 // Also imported by the test global setup to build medslot_test.
-import { readFile } from 'node:fs/promises';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import dotenv from 'dotenv';
 import pg from 'pg';
-
-const dbDir = fileURLToPath(new URL('../db/', import.meta.url));
+import { loadSchemaAndSeed } from '../src/dbSchema.js';
 
 export async function setupDatabase(databaseUrl: string): Promise<void> {
   const target = new URL(databaseUrl);
@@ -28,9 +26,7 @@ export async function setupDatabase(databaseUrl: string): Promise<void> {
   const client = new pg.Client({ connectionString: databaseUrl });
   await client.connect();
   try {
-    for (const file of ['schema.sql', 'seed.sql']) {
-      await client.query(await readFile(dbDir + file, 'utf8'));
-    }
+    await loadSchemaAndSeed(client);
   } finally {
     await client.end();
   }
