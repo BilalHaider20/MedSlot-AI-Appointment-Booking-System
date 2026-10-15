@@ -81,6 +81,15 @@ several API instances, put PgBouncer (transaction mode) in front and keep each
 pool small; nothing here relies on session-level state (`SET LOCAL` for RLS
 works in transaction mode).
 
+## Auth lookups
+
+`requireAuth` reads `password_changed_at` by primary key on every authenticated
+request (sub-millisecond, always cached) so a password change ends older sessions.
+If that ever shows up in profiles, cache it per user for a few seconds or move to
+short-lived access tokens with refresh tokens. Password reset tokens are stored
+as sha256 hashes (`UNIQUE`, which is also the lookup index), and a partial index
+on open tokens per user keeps "revoke the older links" cheap.
+
 ## Smaller decisions
 
 - `citext` for email instead of `lower(email)` everywhere; uniqueness is per business.

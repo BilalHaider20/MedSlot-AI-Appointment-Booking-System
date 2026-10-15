@@ -86,6 +86,15 @@ Dates: `date` is `YYYY-MM-DD` in business timezone, `time` is `HH:mm` 24h,
 | POST | /auth/login | `{ email, password }` | 200 `{ user }` + sets cookie |
 | POST | /auth/logout | - | 204, clears cookie |
 | GET | /auth/me | - | 200 `{ user }` or 401 |
+| POST | /auth/password/forgot | `{ email }` | 202 `{ message }`, same for unknown emails |
+| POST | /auth/password/reset | `{ token, password (min 8) }` | 204, or 400 if the link is expired/used |
+| POST | /auth/password/change | `{ currentPassword, newPassword (min 8) }` | 200 `{ user }` + new cookie; other sessions end |
+
+Reset links carry a random 32-byte token. Only its sha256 is stored, it expires
+after 30 minutes, works once, and asking again revokes older links. Any password
+change moves `users.password_changed_at`, and `requireAuth` rejects tokens issued
+before it, so every other session is signed out. No email provider is wired up:
+outside production the email is written to the API log.
 
 `user = { id, fullName, email, role, business: { id, name, timezone } }`
 

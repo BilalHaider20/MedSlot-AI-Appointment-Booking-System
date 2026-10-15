@@ -9,6 +9,12 @@ export function validateEmail(email: string): string | undefined {
   if (!EMAIL_PATTERN.test(email.trim())) return 'Enter a valid email, like name@example.com.'
 }
 
+export const MIN_PASSWORD = 8
+
+export function validateNewPassword(password: string): string | undefined {
+  if (password.length < MIN_PASSWORD) return `Use at least ${MIN_PASSWORD} characters.`
+}
+
 export function hasErrors<T extends string>(errors: Errors<T>) {
   return Object.values(errors).some(Boolean)
 }

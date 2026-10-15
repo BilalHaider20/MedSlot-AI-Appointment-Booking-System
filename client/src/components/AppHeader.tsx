@@ -1,5 +1,7 @@
-import { LogOut, Monitor, Moon, Sun } from 'lucide-react'
+import { useState } from 'react'
+import { KeyRound, LogOut, Monitor, Moon, Sun } from 'lucide-react'
 import { useAuth, useCurrentUser } from '../auth/AuthProvider'
+import { ChangePasswordDialog } from '../features/account/ChangePasswordDialog'
 import { useTheme, type ThemePreference } from '../theme/ThemeProvider'
 import { Logo } from './Logo'
 import { Menu, MenuItem, MenuSection } from './Menu'
@@ -24,6 +26,7 @@ export function AppHeader() {
   const user = useCurrentUser()
   const { logout } = useAuth()
   const { theme, setTheme } = useTheme()
+  const [changingPassword, setChangingPassword] = useState(false)
   const CurrentThemeIcon = THEME_OPTIONS.find((option) => option.value === theme)?.icon ?? Monitor
 
   return (
@@ -57,12 +60,16 @@ export function AppHeader() {
               <div className={styles.userName}>{user.fullName}</div>
               <div className={styles.userEmail}>{user.email}</div>
             </MenuSection>
+            <MenuItem icon={<KeyRound size={16} aria-hidden />} onSelect={() => setChangingPassword(true)}>
+              Change password
+            </MenuItem>
             <MenuItem icon={<LogOut size={16} aria-hidden />} onSelect={() => void logout()}>
               Log out
             </MenuItem>
           </Menu>
         </div>
       </div>
+      <ChangePasswordDialog open={changingPassword} onClose={() => setChangingPassword(false)} />
     </header>
   )
 }

@@ -5,7 +5,9 @@ import { AuthProvider } from './auth/AuthProvider'
 import { GuestOnly, RequireAuth } from './auth/RouteGuards'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { ToastProvider } from './components/Toast'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { LoginPage } from './pages/LoginPage'
+import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { SignupPage } from './pages/SignupPage'
 import { WorkspacePage } from './pages/WorkspacePage'
 import { ThemeProvider } from './theme/ThemeProvider'
@@ -45,6 +47,22 @@ export function App() {
                     element={
                       <GuestOnly>
                         <SignupPage />
+                      </GuestOnly>
+                    }
+                  />
+                  <Route
+                    path="/forgot-password"
+                    element={
+                      <GuestOnly>
+                        <ForgotPasswordPage />
+                      </GuestOnly>
+                    }
+                  />
+                  <Route
+                    path="/reset-password"
+                    element={
+                      <GuestOnly>
+                        <ResetPasswordPage />
                       </GuestOnly>
                     }
                   />

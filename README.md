@@ -32,14 +32,44 @@ npm run db:setup
 npm run dev
 ```
 
-Open http://localhost:5173 and log in with **demo@medslot.test / demo1234**, or create an account.
+Open http://localhost:5173 and create an account, or log in with a seeded one:
+**demo@medslot.test** or **maya.okafor@medslot.test**, password `demo1234`.
 The API runs on :4000; Vite proxies `/api` to it, so the auth cookie is first-party.
+
+Forgot your password? There's no email provider in this prototype, so the reset
+email (with its link) is printed in the API server's log instead.
 
 Tests (unit tests plus API integration tests against a throwaway `medslot_test` database):
 
 ```bash
 npm test
 ```
+
+## Checking the database
+
+Everything lives in the local `medslot` database. Open a SQL prompt:
+
+```bash
+psql -d medslot
+```
+
+Inside it, `\dt` lists the tables, `\d appointments` shows one table's columns and
+constraints, and `\q` quits. Some useful queries:
+
+```sql
+SELECT full_name, email, created_at FROM users ORDER BY created_at;
+
+SELECT u.full_name, s.name, a.starts_at AT TIME ZONE 'America/New_York' AS starts, a.status, a.source
+FROM appointments a JOIN users u ON u.id = a.user_id JOIN services s ON s.id = a.service_id
+ORDER BY a.starts_at;
+
+-- What the AI extracted from each chat message, and how long it took
+SELECT provider, model, latency_ms, parsed, error FROM ai_interactions ORDER BY id DESC LIMIT 10;
+```
+
+A GUI works too (TablePlus, DBeaver, or the Database tool in a JetBrains IDE):
+host `localhost`, port `5432`, database `medslot`, your macOS username, no password.
+`npm run db:setup` wipes it and reloads the seed data.
 
 ## What's where
 
@@ -85,6 +115,7 @@ Guardrails:
 - **Raw SQL, no ORM.** The schema is part of the work being reviewed, so the constraints and indexes are written out and visible. Each repository maps rows to camelCase explicitly.
 - **Multi-tenant schema, single-tenant demo.** Every table carries `business_id`. Composite foreign keys stop a row from pointing at another tenant's user or service, and every query filters on the `businessId` from the token. Signup attaches new users to `DEFAULT_BUSINESS_SLUG`.
 - **One appointment at a time per business.** The overlap constraint is per business, which fits a single-practitioner clinic. Supporting several staff means adding a `resource_id` to that constraint.
+- **Password changes sign out other sessions.** JWTs are stateless, so on their own a reset wouldn't stop a stolen session. `requireAuth` does one primary-key lookup per request to compare the token's issue time with `password_changed_at`. That's the price of making "reset my password" actually lock someone out.
 - **Cancel is a button, not a chat command.** A misread "cancel" shouldn't cancel the wrong appointment, so the assistant points you to the button.
 
 ## Assumptions
@@ -100,4 +131,4 @@ Guardrails:
 - Mark past bookings `completed` with a scheduled job, and add a retention job for `ai_interactions`
 - Move rate limiting to Redis so it works across instances
 - Postgres row-level security keyed on `business_id`, as a second line of tenant isolation
-- Email confirmations and reminders
+- Send email through a provider (reset links, booking confirmations, reminders); today the mailer only logs

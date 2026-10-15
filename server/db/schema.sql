@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;   -- gen_random_uuid()
 CREATE EXTENSION IF NOT EXISTS citext;     -- case-insensitive email
 CREATE EXTENSION IF NOT EXISTS btree_gist; -- "business_id WITH =" inside the gist exclusion constraint
 
-DROP TABLE IF EXISTS ai_interactions, chat_messages, appointments, chat_sessions, services, users, businesses CASCADE;
+DROP TABLE IF EXISTS ai_interactions, chat_messages, appointments, chat_sessions, services, password_reset_tokens, users, businesses CASCADE;
 DROP FUNCTION IF EXISTS set_updated_at();
 
 CREATE TABLE businesses (
@@ -31,11 +31,27 @@ CREATE TABLE users (
   full_name     text NOT NULL CHECK (length(full_name) BETWEEN 1 AND 100),
   phone         text CHECK (length(phone) <= 32),
   role          text NOT NULL DEFAULT 'customer' CHECK (role IN ('customer', 'staff', 'admin')),
+  -- Sessions (JWTs) issued before this are rejected, so a password change signs out everywhere else.
+  password_changed_at timestamptz NOT NULL DEFAULT now(),
   created_at    timestamptz NOT NULL DEFAULT now(),
   -- Also the index for login: WHERE business_id = $1 AND email = $2.
   CONSTRAINT users_business_email_key UNIQUE (business_id, email),
   -- Target for composite FKs so child rows can't point at another tenant's user.
   CONSTRAINT users_id_business_key UNIQUE (id, business_id)
+);
+
+CREATE TABLE password_reset_tokens (
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_id uuid NOT NULL,
+  user_id     uuid NOT NULL,
+  -- sha256 of the token in the emailed link. The token itself is never stored,
+  -- so a database leak can't be turned into password resets.
+  token_hash  text NOT NULL UNIQUE,
+  expires_at  timestamptz NOT NULL,
+  used_at     timestamptz,
+  created_at  timestamptz NOT NULL DEFAULT now(),
+  CHECK (expires_at > created_at),
+  FOREIGN KEY (user_id, business_id) REFERENCES users (id, business_id) ON DELETE CASCADE
 );
 
 CREATE TABLE services (
@@ -143,6 +159,9 @@ CREATE INDEX appointments_booked_starts_idx ON appointments (business_id, starts
 CREATE INDEX appointments_chat_session_idx ON appointments (chat_session_id) WHERE chat_session_id IS NOT NULL;
 
 -- Session list in the sidebar: WHERE user_id ORDER BY last_message_at DESC.
+-- Revoking a user's outstanding reset links when a new one is sent or one is used.
+CREATE INDEX password_reset_tokens_user_open_idx ON password_reset_tokens (user_id) WHERE used_at IS NULL;
+
 CREATE INDEX chat_sessions_user_recent_idx ON chat_sessions (user_id, last_message_at DESC);
 
 -- Polling: WHERE session_id = $1 AND id > $after ORDER BY id. Also "last 10 messages" for the AI.

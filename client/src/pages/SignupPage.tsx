@@ -6,18 +6,24 @@ import { useAuth } from '../auth/AuthProvider'
 import { Button } from '../components/Button'
 import { Input } from '../components/Input'
 import { AuthLayout } from './AuthLayout'
-import { hasErrors, mapServerError, validateEmail, type Errors } from './authValidation'
+import {
+  MIN_PASSWORD,
+  hasErrors,
+  mapServerError,
+  validateEmail,
+  validateNewPassword,
+  type Errors,
+} from './authValidation'
 import styles from './AuthLayout.module.css'
 
 type Field = keyof SignupInput
 const FIELDS: readonly Field[] = ['fullName', 'email', 'password']
-const MIN_PASSWORD = 8
 
 function validate(values: SignupInput): Errors<Field> {
   return {
     fullName: values.fullName.trim() ? undefined : 'Enter your name.',
     email: validateEmail(values.email),
-    password: values.password.length >= MIN_PASSWORD ? undefined : `Use at least ${MIN_PASSWORD} characters.`,
+    password: validateNewPassword(values.password),
   }
 }
 

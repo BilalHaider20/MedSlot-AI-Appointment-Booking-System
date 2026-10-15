@@ -55,10 +55,24 @@
   margin-top: var(--space-1);
 }
 
+.notice {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--text);
+  font-size: var(--text-small);
+}
+
 .hint {
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
   color: var(--text-muted);
   font-size: var(--text-caption);
+}
+
+.inlineLink {
+  align-self: flex-end;
+  margin-top: calc(var(--space-2) * -1);
+  font-size: var(--text-small);
 }
 
 @media (max-width: 480px) {

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { Link, useNavigate } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { authApi } from '../api/auth'
 import { useAuth } from '../auth/AuthProvider'
 import { Button } from '../components/Button'
@@ -22,6 +22,7 @@ function validate(email: string, password: string): Errors<Field> {
 export function LoginPage() {
   const { setUser } = useAuth()
   const navigate = useNavigate()
+  const notice = (useLocation().state as { notice?: string } | null)?.notice
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<Errors<Field>>({})
@@ -65,6 +66,11 @@ export function LoginPage() {
       }
     >
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
+        {notice && !formError && (
+          <p className={styles.notice} role="status">
+            {notice}
+          </p>
+        )}
         {formError && (
           <p className={styles.formError} role="alert">
             {formError}
@@ -92,6 +98,9 @@ export function LoginPage() {
             revalidate(email, event.target.value)
           }}
         />
+        <Link to="/forgot-password" className={styles.inlineLink}>
+          Forgot password?
+        </Link>
         <Button
           type="submit"
           variant="primary"
@@ -103,7 +112,6 @@ export function LoginPage() {
           Log in
         </Button>
       </form>
-      <p className={styles.hint}>Demo account: demo@medslot.test / demo1234</p>
     </AuthLayout>
   )
 }

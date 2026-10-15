@@ -1,4 +1,4 @@
-import { query } from '../../db.js';
+import { pool, query, type Queryable } from '../../db.js';
 import type { Role } from './auth.tokens.js';
 
 export type PublicUser = {
@@ -37,6 +37,31 @@ const toPublicUser = (row: UserRow): PublicUser => ({
 export async function findUserById(businessId: string, userId: string): Promise<PublicUser | null> {
   const rows = await query<UserRow>(`${userSelect} WHERE u.business_id = $1 AND u.id = $2`, [businessId, userId]);
   return rows[0] ? toPublicUser(rows[0]) : null;
+}
+
+export async function findUserByEmail(businessId: string, email: string): Promise<PublicUser | null> {
+  const rows = await query<UserRow>(`${userSelect} WHERE u.business_id = $1 AND u.email = $2`, [businessId, email]);
+  return rows[0] ? toPublicUser(rows[0]) : null;
+}
+
+export async function findPasswordHash(businessId: string, userId: string): Promise<string | null> {
+  const rows = await query<{ password_hash: string }>(
+    'SELECT password_hash FROM users WHERE business_id = $1 AND id = $2',
+    [businessId, userId],
+  );
+  return rows[0]?.password_hash ?? null;
+}
+
+export async function findPasswordChangedAt(businessId: string, userId: string): Promise<Date | null> {
+  const rows = await query<{ password_changed_at: Date }>(
+    'SELECT password_changed_at FROM users WHERE business_id = $1 AND id = $2',
+    [businessId, userId],
+  );
+  return rows[0]?.password_changed_at ?? null;
+}
+
+export async function updatePassword(userId: string, passwordHash: string, db: Queryable = pool): Promise<void> {
+  await query('UPDATE users SET password_hash = $2, password_changed_at = now() WHERE id = $1', [userId, passwordHash], db);
 }
 
 export async function findCredentials(

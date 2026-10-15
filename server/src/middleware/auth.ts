@@ -1,5 +1,6 @@
 import type { Request, RequestHandler } from 'express';
 import { unauthorized } from '../lib/httpError.js';
+import { isSessionCurrent } from '../modules/auth/auth.service.js';
 import { TOKEN_COOKIE, verifyToken, type AuthUser } from '../modules/auth/auth.tokens.js';
 
 declare global {
@@ -19,11 +20,13 @@ function readToken(req: Request): string | undefined {
   return undefined;
 }
 
-export const requireAuth: RequestHandler = (req, _res, next) => {
+export const requireAuth: RequestHandler = async (req, _res, next) => {
   const token = readToken(req);
-  const user = token ? verifyToken(token) : null;
-  if (!user) throw unauthorized();
-  req.user = user;
+  const verified = token ? verifyToken(token) : null;
+  // One indexed lookup per request buys real logout-everywhere after a password change.
+  if (!verified || !(await isSessionCurrent(verified))) throw unauthorized();
+  const { id, businessId, role } = verified;
+  req.user = { id, businessId, role };
   next();
 };
 
