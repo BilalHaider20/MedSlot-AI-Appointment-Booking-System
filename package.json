@@ -8,8 +8,7 @@
     "dev:server": "PORT=4000 npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
     "test": "npm --prefix server test",
-    "build": "npm --prefix client run build",
-    "render-build": "npm ci --prefix server --include=dev && npm ci --prefix client --include=dev && npm run build --prefix client",
+    "build": "npm ci --prefix server --include=dev && npm ci --prefix client --include=dev && npm run build --prefix client",
     "start": "npm --prefix server start"
   },
   "devDependencies": {
