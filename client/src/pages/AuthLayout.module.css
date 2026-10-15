@@ -1,0 +1,75 @@
+.page {
+  display: flex;
+  justify-content: center;
+  min-height: 100%;
+  padding: 12vh var(--space-4) var(--space-7);
+}
+
+.column {
+  width: 100%;
+  max-width: 400px;
+}
+
+.product {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-section);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.card {
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.title {
+  font-size: var(--text-auth);
+}
+
+.subtitle {
+  margin: var(--space-1) 0 var(--space-5);
+  color: var(--text-muted);
+}
+
+.footer {
+  margin-top: var(--space-4);
+  color: var(--text-muted);
+  font-size: var(--text-small);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formError {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: var(--text-small);
+}
+
+.submit {
+  margin-top: var(--space-1);
+}
+
+.hint {
+  margin-top: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-caption);
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding-top: var(--space-6);
+  }
+
+  .card {
+    padding: var(--space-5);
+  }
+}

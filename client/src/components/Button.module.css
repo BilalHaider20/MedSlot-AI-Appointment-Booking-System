@@ -1,0 +1,78 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.button:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.button:disabled {
+  opacity: 0.55;
+}
+
+.button[aria-busy='true'] {
+  opacity: 0.85;
+}
+
+.sm {
+  height: 30px;
+  padding: 0 10px;
+  font-size: var(--text-small);
+}
+
+.block {
+  width: 100%;
+}
+
+.primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.secondary {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.secondary:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
+.ghost {
+  color: var(--text-muted);
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.danger-ghost {
+  color: var(--danger);
+}
+
+.danger-ghost:hover:not(:disabled) {
+  background: var(--danger-soft);
+}

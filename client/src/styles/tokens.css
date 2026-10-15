@@ -1,0 +1,94 @@
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --surface-2: #f0efeb;
+  --border: #e3e1db;
+  --border-strong: #cfccc4;
+  --text: #1c1f1e;
+  --text-muted: #6a6f6c;
+  --accent: #1f6f5c;
+  --accent-hover: #185a4a;
+  --accent-soft: #e3f0eb;
+  --on-accent: #ffffff;
+  --danger: #b3412e;
+  --danger-soft: #f8e6e2;
+  --warning: #9a6b12;
+  --success: #2f7a3e;
+  --success-soft: color-mix(in srgb, var(--success) 12%, var(--surface));
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
+  --overlay: rgb(20 22 21 / 0.4);
+
+  --font-sans: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-caption: 0.75rem;
+  --text-small: 0.8125rem;
+  --text-body: 0.9375rem;
+  --text-section: 1.0625rem;
+  --text-page: 1.25rem;
+  --text-auth: 1.5rem;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-bubble: 14px;
+  --radius-tail: 4px;
+
+  --header-height: 56px;
+  --duration-enter: 150ms;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #111312;
+    --surface: #181b1a;
+    --surface-2: #1f2321;
+    --border: #2a2f2d;
+    --border-strong: #3a403d;
+    --text: #e8eae8;
+    --text-muted: #9aa19d;
+    --accent: #5cb89c;
+    --accent-hover: #74c7ad;
+    --accent-soft: #1c2e28;
+    --on-accent: #0e1a16;
+    --danger: #e07a65;
+    --danger-soft: #2e1c18;
+    --warning: #d9ae5a;
+    --success: #6cc27e;
+    --shadow-sm: none;
+    --overlay: rgb(0 0 0 / 0.6);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #111312;
+  --surface: #181b1a;
+  --surface-2: #1f2321;
+  --border: #2a2f2d;
+  --border-strong: #3a403d;
+  --text: #e8eae8;
+  --text-muted: #9aa19d;
+  --accent: #5cb89c;
+  --accent-hover: #74c7ad;
+  --accent-soft: #1c2e28;
+  --on-accent: #0e1a16;
+  --danger: #e07a65;
+  --danger-soft: #2e1c18;
+  --warning: #d9ae5a;
+  --success: #6cc27e;
+  --shadow-sm: none;
+  --overlay: rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}

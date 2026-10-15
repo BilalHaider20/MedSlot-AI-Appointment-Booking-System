@@ -1,0 +1,25 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.neutral {
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+
+.danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
